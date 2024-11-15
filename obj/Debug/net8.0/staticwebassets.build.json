@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "0X5BIdll7wNHd5bCJwQ/S4Fu6oikwzt0FSgPA7aW9pw=",
+  "Source": "HealthApplication",
+  "BasePath": "_content/HealthApplication",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
