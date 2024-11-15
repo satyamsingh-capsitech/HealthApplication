@@ -37,45 +37,45 @@ namespace HealthApplication.Controllers
 
 
         }
-        // POST
-        [HttpPost]
-        public async Task<ActionResult> Create([FromForm] HealthModel health)
-        {
-            // Insert into database or further processing
-            await _healthService.CreateHealthAsync(health);
-            return Ok();
-        }
-
-
+        //// POST
         //[HttpPost]
-        //public async Task<IActionResult> Upsert([FromBody] HealthModel healthModel, string id = null)
+        //public async Task<ActionResult> Create([FromBody] HealthModel health)
         //{
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var errors=ModelState.Values.SelectMany(x => x.Errors)
-        //        .Select(errors=>errors.ErrorMessage)
-        //            .ToList();
-        //        return BadRequest(new { Message ="validation error", Errors=errors });
-        //    }
-        //    if (!string.IsNullOrEmpty(id))
-        //    {
-        //        healthModel.Id = id;
-
-        //        var wasUpdated = await _healthService.UpdateHealthAsync(id, healthModel);
-        //        if (!wasUpdated)
-        //        {
-        //            return NotFound("Record not found");
-        //        }
-        //        return Ok("Record updated successfully");
-        //    }
-        //    else
-        //    {
-        //        await _healthService.CreateHealthAsync(healthModel);
-        //        return Ok("record created");
-
-        //    }
+        //    // Insert into database or further processing
+        //    await _healthService.CreateHealthAsync(health);
+        //    return Ok();
         //}
+
+
+        [HttpPost]
+        public async Task<IActionResult> Upsert([FromBody] HealthModel healthModel, string id = null)
+        {
+
+            //if (!ModelState.IsValid)
+            //{
+            //    var errors = ModelState.Values.SelectMany(x => x.Errors)
+            //    .Select(errors => errors.ErrorMessage)
+            //        .ToList();
+            //    return BadRequest(new { Message = "validation error", Errors = errors });
+            //}
+            if (!string.IsNullOrEmpty(id))
+            {
+                healthModel.Id = id;
+
+                var wasUpdated = await _healthService.UpdateHealthAsync(id, healthModel);
+                if (!wasUpdated)
+                {
+                    return NotFound("Record not found");
+                }
+                return Ok("Record updated successfully");
+            }
+            else
+            {
+                await _healthService.CreateHealthAsync(healthModel);
+                return Ok("record created");
+
+            }
+        }
 
     }
 }

@@ -35,14 +35,16 @@ namespace HealthApplication.Controllers
             var user = await _loginService.ValidateUserAsync(login.UserName, login.Password);
             if (user == null)
             {
-                return Unauthorized("Invalid username or password");
+                return Unauthorized(new { message = "Invalid username or password" });
             }
-            var loginRespone = new LoginModel
+
+            // Optionally
+            var loginResponse = new LoginModel
             {
                 UserName = user.UserName,
             };
-            return Ok(loginRespone);
 
+            return Ok(loginResponse);
         }
     }
 }

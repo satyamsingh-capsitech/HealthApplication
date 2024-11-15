@@ -74,3 +74,4 @@ C:\Users\CT_USER\Desktop\Basic-Form\HealthApplication\HealthApplication\obj\Debu
 C:\Users\CT_USER\Desktop\Basic-Form\HealthApplication\HealthApplication\obj\Debug\net8.0\HealthApplication.pdb
 C:\Users\CT_USER\Desktop\Basic-Form\HealthApplication\HealthApplication\obj\Debug\net8.0\HealthApplication.genruntimeconfig.cache
 C:\Users\CT_USER\Desktop\Basic-Form\HealthApplication\HealthApplication\obj\Debug\net8.0\ref\HealthApplication.dll
+C:\Users\CT_USER\Desktop\Basic-Form\HealthApplication\HealthApplication\obj\Debug\net8.0\HealthApplication.sourcelink.json

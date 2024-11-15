@@ -9,17 +9,17 @@ namespace HealthApplication.Model
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Name { get; set; }
+        public string UserName { get; set; } 
+        public string Password { get; set; } 
+        public string Name { get; set; } = string.Empty;
 
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
 
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
-        public string PhoneNo { get; set; }
+        public string PhoneNo { get; set; } = string.Empty;
 
-        public string GstIn { get; set; }
+        public string GstIn { get; set; } = string.Empty;
 
     }
 }
