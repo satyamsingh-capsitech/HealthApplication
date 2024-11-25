@@ -1,10 +1,13 @@
 ﻿using HealthApplication.Model;
 using HealthApplication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
 namespace HealthApplication.Controllers
 {
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class HealthController : ControllerBase
@@ -15,8 +18,9 @@ namespace HealthApplication.Controllers
             _healthService = healthService;
         }
         // GET
+        
         [HttpGet]
-        public async Task<ActionResult<List<HealthModel>>> Get([FromQuery] string id = null, [FromQuery] string billNo = "", [FromQuery] string name = "")
+        public async Task<ActionResult<List<HealthModel>>> Get([FromQuery] string id = null, [FromQuery] string billId = "", [FromQuery] string name = "")
         {
 
             if (!string.IsNullOrEmpty(id))
@@ -31,33 +35,20 @@ namespace HealthApplication.Controllers
             }
             else
             {
-                var users = await _healthService.GetAllHealthAsync( name ,billNo);
+                var users = await _healthService.GetAllHealthAsync( name , billId);
                 return Ok(users);
             }
 
 
         }
-        //// POST
-        //[HttpPost]
-        //public async Task<ActionResult> Create([FromBody] HealthModel health)
-        //{
-        //    // Insert into database or further processing
-        //    await _healthService.CreateHealthAsync(health);
-        //    return Ok();
-        //}
 
 
         [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Upsert([FromBody] HealthModel healthModel, string id = null)
         {
 
-            //if (!ModelState.IsValid)
-            //{
-            //    var errors = ModelState.Values.SelectMany(x => x.Errors)
-            //    .Select(errors => errors.ErrorMessage)
-            //        .ToList();
-            //    return BadRequest(new { Message = "validation error", Errors = errors });
-            //}
+        
             if (!string.IsNullOrEmpty(id))
             {
                 healthModel.Id = id;
@@ -71,11 +62,26 @@ namespace HealthApplication.Controllers
             }
             else
             {
+
+                
+                healthModel.BillId = GenerateBillId();
+
+               
+                //healthModel.BillNo = GenerateBillNo();
                 await _healthService.CreateHealthAsync(healthModel);
                 return Ok("record created");
 
             }
         }
+        private string GenerateBillId()
+        {
+            var random = new Random();
+            return random.Next(1000, 10000).ToString();
+        }
+        //private string GenerateBillNo()
+        //{
+        //    return $"Cap-{GetNextAutoNo:D4}";
+        //}
 
     }
 }

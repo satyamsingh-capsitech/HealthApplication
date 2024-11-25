@@ -1,19 +1,28 @@
-﻿using HealthApplication.Model;
+﻿
+using HealthApplication.Model;
 using HealthApplication.Services;
-using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace HealthApplication.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
         private readonly LoginServices _loginService;
-        public LoginController(LoginServices loginService)
+        private readonly IConfiguration _configuration;
+
+        public LoginController(LoginServices loginService, IConfiguration configuration)
         {
             _loginService = loginService;
+            _configuration = configuration;
         }
+
         // GET
         [HttpGet]
         public async Task<ActionResult<List<LoginModel>>> Get()
@@ -21,6 +30,7 @@ namespace HealthApplication.Controllers
             var users = await _loginService.GetAllLoginAsync();
             return Ok(users);
         }
+
         // POST
         [HttpPost]
         public async Task<ActionResult> Create(LoginModel login)
@@ -29,6 +39,8 @@ namespace HealthApplication.Controllers
             return Ok();
         }
 
+        // POST for login api
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<LoginModel>> Login([FromBody] LoginModel login)
         {
@@ -38,15 +50,34 @@ namespace HealthApplication.Controllers
                 return Unauthorized(new { message = "Invalid username or password" });
             }
 
-            // Optionally
-            var loginResponse = new LoginModel
+            //  token
+            var token = GenerateJwtToken(user);
+
+           
+            return Ok(new { UserName = user.UserName, Token = token });
+        }
+
+        // JWT Token
+        private string GenerateJwtToken(LoginModel user)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                UserName = user.UserName,
+                Subject = new System.Security.Claims.ClaimsIdentity(new[]
+                {
+                    new System.Security.Claims.Claim("id", user.Id.ToString()),
+                    new System.Security.Claims.Claim("username", user.UserName),
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = credentials
             };
 
-            return Ok(loginResponse);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }
-
-
